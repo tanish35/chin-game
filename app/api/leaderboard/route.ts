@@ -1,16 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma  from '@/lib/prisma'
 
+interface LeaderboardEntry {
+  id: string
+  userId: string
+  displayName: string
+  totalTime: number
+  penalties: number
+  completedAt: Date
+  score: number
+}
+
 export async function GET() {
   try {
     const leaderboards = await prisma.leaderboard.findMany({
-      orderBy: [
-        { totalTime: 'asc' },
-        { penalties: 'asc' },
-      ],
       take: 50,
     })
-    return NextResponse.json(leaderboards)
+
+    // Calculate score for each entry: time in seconds + penalties * 15
+    const scoredLeaderboards: LeaderboardEntry[] = leaderboards.map((entry: any) => ({
+      ...entry,
+      score: Math.floor(entry.totalTime / 1000) + entry.penalties * 15
+    }))
+
+    // Sort by score ascending (lower score is better)
+    scoredLeaderboards.sort((a: LeaderboardEntry, b: LeaderboardEntry) => a.score - b.score)
+
+    return NextResponse.json(scoredLeaderboards)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 })
   }

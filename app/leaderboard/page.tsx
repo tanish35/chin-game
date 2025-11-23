@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTheme } from "@/lib/theme";
 
 interface LeaderboardEntry {
   id: string;
@@ -9,9 +10,11 @@ interface LeaderboardEntry {
   totalTime: number;
   penalties: number;
   completedAt: Date;
+  score: number;
 }
 
 export default function Leaderboard() {
+  const { theme, toggleTheme } = useTheme();
   const [leaderboards, setLeaderboards] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,32 +35,40 @@ export default function Leaderboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white text-3xl">
+      <div className="min-h-screen flex items-center justify-center text-white dark:text-gray-200 text-3xl bg-linear-to-br from-purple-400 to-blue-500 dark:from-gray-800 dark:to-gray-900">
         Loading...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-400 to-blue-500 p-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">🏆 Leaderboard</h1>
-          <p className="text-xl text-white/80">
-            Fastest solvers with fewest penalties
-          </p>
-          <a
-            href="/game"
-            className="inline-block mt-6 px-8 py-3 bg-white text-purple-600 font-semibold rounded-xl hover:bg-gray-100 transition"
+        <div className="flex justify-between items-center mb-12">
+          <div className="text-center flex-1">
+            <h1 className="text-5xl font-bold text-white dark:text-gray-200 mb-4">🏆 Leaderboard</h1>
+            <p className="text-xl text-white/80 dark:text-gray-300">
+              Lowest scores win! (Time + Penalties)
+            </p>
+            <a
+              href="/game"
+              className="inline-block mt-6 px-8 py-3 bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-300 font-semibold rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            >
+              Play Game
+            </a>
+          </div>
+          <button
+            onClick={toggleTheme}
+            className="p-3 bg-white/20 dark:bg-gray-700 rounded-xl hover:bg-white/30 dark:hover:bg-gray-600 transition"
           >
-            Play Game
-          </a>
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
+        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-linear-to-br from-purple-500 to-blue-500 text-white">
+              <tr className="bg-linear-to-br from-purple-500 to-blue-500 dark:from-purple-700 dark:to-blue-700 text-white">
                 <th className="p-6 text-left font-semibold text-lg">#</th>
                 <th className="p-6 text-left font-semibold text-lg">Player</th>
                 <th className="p-6 text-right font-semibold text-lg">Time</th>
@@ -69,19 +80,18 @@ export default function Leaderboard() {
               {leaderboards.map((entry, index) => (
                 <tr
                   key={entry.id}
-                  className="border-b last:border-b-0 hover:bg-gray-50 transition"
+                  className="border-b last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                 >
                   <td className="p-6 font-bold text-2xl">{index + 1}</td>
                   <td className="p-6 font-semibold">{entry.displayName}</td>
                   <td className="p-6 text-right">
                     {Math.floor(entry.totalTime / 1000)}s
                   </td>
-                  <td className="p-6 text-right text-red-600 font-semibold">
+                  <td className="p-6 text-right text-red-600 dark:text-red-400 font-semibold">
                     {entry.penalties}
                   </td>
                   <td className="p-6 text-right font-bold text-2xl">
-                    {Math.floor(entry.totalTime / 1000) +
-                      entry.penalties * 30}
+                    {entry.score}
                   </td>
                 </tr>
               ))}
@@ -90,7 +100,7 @@ export default function Leaderboard() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="p-12 text-center text-gray-500 text-xl"
+                    className="p-12 text-center text-gray-500 dark:text-gray-400 text-xl"
                   >
                     No scores yet. Be the first!
                   </td>

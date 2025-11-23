@@ -4,6 +4,7 @@ import { CHINS, type ChinPerson } from '@/src/lib/chins'
 import { fuzzyMatch } from '@/src/lib/fuse'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTheme } from '@/lib/theme'
 
 interface GameState {
   currentIndex: number
@@ -18,6 +19,7 @@ interface GameState {
 
 export default function Game() {
   const router = useRouter()
+  const { theme, toggleTheme } = useTheme()
   const [gameState, setGameState] = useState<GameState>({
     currentIndex: 0,
     shuffledChins: [],
@@ -152,11 +154,20 @@ export default function Game() {
 
   if (gameState.currentIndex >= 10 || gameState.completed) {
     return (
-      <div className="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-8">Quiz Complete!</h1>
+      <div className="max-w-md mx-auto mt-20 p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold">Quiz Complete!</h1>
+          <button
+            onClick={toggleTheme}
+            className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
+        </div>
         <div className="space-y-4 mb-8">
           <p>Total Time: {Math.floor(totalTime / 1000)}s</p>
           <p>Penalties: {gameState.penalties}</p>
+          <p className="font-bold">Final Score: {Math.floor(totalTime / 1000) + gameState.penalties * 15}</p>
           {gameState.displayName && <p>Player: {gameState.displayName}</p>}
         </div>
         <div className="flex gap-4 justify-center">
@@ -181,8 +192,8 @@ export default function Game() {
 
   if (!currentChin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-400 to-blue-500 p-4">
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 p-4">
+        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 text-center">
           <p className="text-lg font-semibold">Loading your next chin...</p>
         </div>
       </div>
@@ -190,34 +201,40 @@ export default function Game() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-400 to-blue-500 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 space-y-6">
-        <div className="text-center">
-          {gameState.displayName && (
-            <div className="text-sm text-gray-500 mb-1">Playing as {gameState.displayName}</div>
-          )}
-          <div className="text-sm text-gray-500 mb-2">Question {gameState.currentIndex + 1}/10</div>
-          <div className="text-2xl font-bold mb-4">Who is this?</div>
-          <div className="w-48 h-64 mx-auto bg-gray-200 rounded-2xl overflow-hidden shadow-lg mb-4">
-            <img src={currentChin.image} alt="Chin" className="w-full h-full object-cover" />
+    <div className="min-h-screen bg-linear-to-br from-purple-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="text-center flex-1">
+            {gameState.displayName && (
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Playing as {gameState.displayName}</div>
+            )}
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Question {gameState.currentIndex + 1}/10</div>
+            <div className="text-2xl font-bold mb-4">Who is this?</div>
           </div>
-          {showAnswer && (
-            <div className="text-lg font-semibold text-green-600 bg-green-100 p-3 rounded-xl">
-              It was {currentChin.name}!
-            </div>
-          )}
+          <button
+            onClick={toggleTheme}
+            className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
         </div>
-
+        <div className="w-48 h-64 mx-auto bg-gray-200 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-lg mb-4">
+          <img src={currentChin.image} alt="Chin" className="w-full h-full object-cover" />
+        </div>
+        {showAnswer && (
+          <div className="text-lg font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900 p-3 rounded-xl">
+            It was {currentChin.name}!
+          </div>
+        )}
         <div className="space-y-3">
           <div className="flex justify-between text-lg">
             <span>Chances: {chancesLeft}</span>
             <span>Penalties: {gameState.penalties}</span>
           </div>
-          <div className="flex justify-center text-sm text-gray-500">
+          <div className="flex justify-center text-sm text-gray-500 dark:text-gray-400">
             Time: {Math.floor(totalTime / 1000)}s
           </div>
         </div>
-
         <div className="flex gap-2">
           <input
             ref={inputRef}
@@ -225,7 +242,7 @@ export default function Game() {
             onChange={(e) => setCurrentGuess(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleGuess()}
             placeholder="Guess the name..."
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             disabled={showAnswer || gameState.completed}
           />
           <button
