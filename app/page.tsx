@@ -68,7 +68,7 @@ export default function Home() {
       <div className="max-w-2xl w-full bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-10 space-y-8 text-center">
         <div>
           <p className="uppercase tracking-[0.3em] text-sm font-semibold text-purple-500 mb-3">Guess The Chin</p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">How many celebrities can you spot by their chin?</h1>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">Guess?</h1>
           <p className="text-lg text-gray-600">
             Enter your name, hit start, and race against the clock. You get three chances per chin—go fast, avoid penalties, and climb the leaderboard.
           </p>
