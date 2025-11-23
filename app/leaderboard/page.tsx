@@ -23,7 +23,8 @@ export default function Leaderboard() {
       try {
         const res = await fetch("/api/leaderboard", { cache: "no-store" });
         const data = await res.json();
-        setLeaderboards(data);
+        const sorted = [...data].sort((a, b) => a.score - b.score);
+        setLeaderboards(sorted);
       } catch (err) {
         console.error("Failed to load leaderboard:", err);
       }
@@ -73,7 +74,6 @@ export default function Leaderboard() {
                 <th className="p-6 text-left font-semibold text-lg">Player</th>
                 <th className="p-6 text-right font-semibold text-lg">Time</th>
                 <th className="p-6 text-right font-semibold text-lg">Penalties</th>
-                <th className="p-6 text-right font-semibold text-lg">Score</th>
               </tr>
             </thead>
             <tbody>
@@ -89,9 +89,6 @@ export default function Leaderboard() {
                   </td>
                   <td className="p-6 text-right text-red-600 dark:text-red-400 font-semibold">
                     {entry.penalties}
-                  </td>
-                  <td className="p-6 text-right font-bold text-2xl">
-                    {entry.score}
                   </td>
                 </tr>
               ))}
