@@ -245,7 +245,11 @@ export default function Game() {
           </button>
         </div>
         <div className="w-48 h-64 mx-auto bg-gray-200 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-lg mb-4">
-          <Image src={currentChin.image} alt="" fill className="object-cover" />
+          <Image
+            src={currentChin.image}
+            alt="Chin"
+            className="w-full h-full object-cover"
+          />
         </div>
         {showAnswer && (
           <div className="text-lg font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900 p-3 rounded-xl">
